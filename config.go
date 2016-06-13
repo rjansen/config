@@ -12,6 +12,7 @@ var (
 	configuration *Configuration
 )
 
+//Configuration holds all possible configurations structs
 type Configuration struct {
 	Version string
 	*HandlerConfig
@@ -20,12 +21,14 @@ type Configuration struct {
 	*DBConfig
 	*SecurityConfig
 	*CacheConfig
+	*LoggerConfig
 }
 
 func (c *Configuration) String() string {
 	return fmt.Sprintf("Configuration[Version[%v] ProxyConfig[%+v] DBConfig[%+v] SecurityConfig[%v]]", c.Version, c.ProxyConfig, c.DBConfig, c.SecurityConfig)
 }
 
+//BindConfiguration starts the configuration library
 func BindConfiguration() *Configuration {
 	if configuration == nil {
 		configuration = &Configuration{}
@@ -36,12 +39,14 @@ func BindConfiguration() *Configuration {
 		configuration.CassandraConfig = BindCassandraConfiguration()
 		configuration.DBConfig = BindDBConfiguration()
 		configuration.CacheConfig = BindCacheConfiguration()
+		configuration.LoggerConfig = BindLoggerConfiguration()
 	}
 	return configuration
 }
 
 //Init initializes the flag system
 func Init() {
+	BindConfiguration()
 	iniflags.Parse()
 }
 
