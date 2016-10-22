@@ -2,67 +2,104 @@ package config
 
 import (
 	"flag"
-	"fmt"
-	"github.com/vharitonsky/iniflags"
-	"os"
+	//"fmt"
+	"strings"
+	"sync"
 	"time"
 )
 
 var (
-	configuration *Configuration
+	once     sync.Once
+	ecfgOnce sync.Once
 )
 
-//Configuration holds all possible configurations structs
-type Configuration struct {
-	Version string
-	*HandlerConfig
-	*ProxyConfig
-	*CassandraConfig
-	*DBConfig
-	*SecurityConfig
-	*CacheConfig
-	*LoggerConfig
-}
+// func init() {
+// 	fmt.Println("config.init")
+// }
 
-func (c *Configuration) String() string {
-	return fmt.Sprintf("Configuration[Version[%v] ProxyConfig[%+v] DBConfig[%+v] SecurityConfig[%v]]", c.Version, c.ProxyConfig, c.DBConfig, c.SecurityConfig)
-}
-
-//BindConfiguration starts the configuration library
-func BindConfiguration() *Configuration {
-	if configuration == nil {
-		configuration = &Configuration{}
-		flag.StringVar(&configuration.Version, "version", fmt.Sprintf("transientbuild-%v", time.Now().UnixNano()), "Target bind address")
-
-		configuration.HandlerConfig = BindHandlerConfiguration()
-		configuration.ProxyConfig = BindProxyConfiguration()
-		configuration.CassandraConfig = BindCassandraConfiguration()
-		configuration.DBConfig = BindDBConfiguration()
-		configuration.CacheConfig = BindCacheConfiguration()
-		configuration.LoggerConfig = BindLoggerConfiguration()
-	}
+//Get returns the singleton instance of the Configuration
+func Get() Configuration {
+	once.Do(func() {
+		if configuration == nil {
+			setupErr := setupViper()
+			if setupErr != nil {
+				panic(setupErr)
+			}
+		}
+	})
 	return configuration
 }
 
-//Init initializes the flag system
-func Init() {
-	BindConfiguration()
-	iniflags.Parse()
+//Setup initializes the package
+func Setup() error {
+	ecfgOnce.Do(func() {
+		if strings.TrimSpace(configFilePath) == "" {
+			flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
+		}
+	})
+	return setupViper()
 }
 
-// Print error, usage and exit with code
-func printErrorUsageAndExitWithCode(err string, code int) {
-	fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
-	printUsage()
-	os.Exit(code)
+func GetInterface(key string) interface{} {
+	return Get().GetInterface(key)
 }
 
-// Print command line help
-func printUsage() {
-	fmt.Fprintf(os.Stderr, "Usage: %s [flags] [CONFIG]\n", os.Args[0])
-	fmt.Fprintf(os.Stderr, "\nFlags:\n")
-	flag.PrintDefaults()
-	fmt.Fprintf(os.Stderr, "\nArguments:\n")
-	fmt.Fprintf(os.Stderr, "  CONFIG: Config file path\n")
-	fmt.Fprintf(os.Stderr, "\n")
+func GetBool(key string) bool {
+	return Get().GetBool(key)
+}
+
+func GetDuration(key string) time.Duration {
+	return Get().GetDuration(key)
+}
+
+func GetFloat64(key string) float64 {
+	return Get().GetFloat64(key)
+}
+
+func GetInt(key string) int {
+	return Get().GetInt(key)
+}
+
+func GetInt64(key string) int64 {
+	return Get().GetInt64(key)
+}
+
+func GetString(key string) string {
+	return Get().GetString(key)
+}
+
+func GetStringMap(key string) map[string]interface{} {
+	return Get().GetStringMap(key)
+}
+
+func GetStringMapString(key string) map[string]string {
+	return Get().GetStringMapString(key)
+}
+
+func GetStringMapStringSlice(key string) map[string][]string {
+	return Get().GetStringMapStringSlice(key)
+}
+
+func GetStringSlice(key string) []string {
+	return Get().GetStringSlice(key)
+}
+
+func GetTime(key string) time.Time {
+	return Get().GetTime(key)
+}
+
+func InConfig(key string) bool {
+	return Get().InConfig(key)
+}
+
+func IsSet(key string) bool {
+	return Get().IsSet(key)
+}
+
+func Unmarshal(rawVal interface{}) error {
+	return Get().Unmarshal(rawVal)
+}
+
+func UnmarshalKey(key string, rawVal interface{}) error {
+	return Get().UnmarshalKey(key, rawVal)
 }
