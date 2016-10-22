@@ -89,17 +89,6 @@ func setupViper() error {
 		fmt.Println("comfig.setupViper.ErrInvalidConfigFilePath ", configFilePath)
 		return fmt.Errorf("config.ErrInvalidConfigFilePath ecf=%v\n", configFilePath)
 	}
-	// configExt := path.Ext(configFilePath)
-	// configName := strings.TrimSuffix(path.Base(configFilePath), configExt)
-	// configType := configExt[1:]
-	// configPath := path.Dir(configFilePath)
-	// fmt.Printf("config.settingUpViper Name=%v Type=%v Path=%v Cfg=%v]\n", configName, configType, configPath, configFilePath)
-	// viper.SetConfigName(configName)
-	// viper.SetConfigType(configType)
-	// viper.AddConfigPath(configPath)
-	//viper.AddConfigPath("/etc/appname/")  // path to look for the config file in
-	//viper.AddConfigPath("$HOME/.appname") // call multiple times to add many search paths
-	fmt.Println("comfig.setupViper.configFilePath ", configFilePath)
 	viper.SetConfigFile(configFilePath)
 	err := viper.ReadInConfig()
 	if err != nil { // Handle errors reading the config file
