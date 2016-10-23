@@ -14,7 +14,6 @@ func clean(t assert.TestingT) {
 }
 
 func reset(t assert.TestingT) {
-	ecfOnce.Reset()
 	configuration = nil
 	once.Reset()
 }

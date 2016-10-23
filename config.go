@@ -3,25 +3,29 @@ package config
 import (
 	"flag"
 	//"fmt"
+	"fmt"
 	"github.com/matryer/resync"
-	"strings"
 	"time"
 )
 
 var (
-	once    resync.Once
-	ecfOnce resync.Once
+	once           resync.Once
+	ecfOnce        resync.Once
+	configuration  Configuration
+	configFilePath string
 )
 
-// func init() {
-// 	fmt.Println("config.init")
-// }
+func init() {
+	fmt.Println("config.init")
+	flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
+}
 
 //Get returns the singleton instance of the Configuration
 func Get() Configuration {
 	once.Do(func() {
 		if configuration == nil {
-			setupErr := setupViper()
+			fmt.Println("config.Get.Setup")
+			setupErr := Setup()
 			if setupErr != nil {
 				panic(setupErr)
 			}
@@ -33,11 +37,6 @@ func Get() Configuration {
 
 //Setup initializes the package
 func Setup() error {
-	ecfOnce.Do(func() {
-		if strings.TrimSpace(configFilePath) == "" {
-			flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
-		}
-	})
 	return setupViper()
 }
 

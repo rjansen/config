@@ -5,6 +5,14 @@ import (
 	"fmt"
 )
 
+var (
+	cfg = config.Get()
+)
+
+func init() {
+	fmt.Printf("main.init config=%+v\n", cfg)
+}
+
 func main() {
-	fmt.Println("SetupErr =", config.Setup())
+	fmt.Printf("config.main config=%+v\n", cfg)
 }
