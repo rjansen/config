@@ -27,6 +27,7 @@ install_sw_deps:
 
 .PHONY: install_deps
 install_deps:
+	govendor fetch github.com/matryer/resync
 	govendor fetch github.com/spf13/viper
 
 .PHONY: sync_deps

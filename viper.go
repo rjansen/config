@@ -86,18 +86,24 @@ func (v viperConfiguration) UnmarshalKey(key string, rawVal interface{}) error {
 func setupViper() error {
 	flag.Parse()
 	if strings.TrimSpace(configFilePath) == "" {
-		fmt.Println("comfig.setupViper.ErrInvalidConfigFilePath ", configFilePath)
-		return fmt.Errorf("config.ErrInvalidConfigFilePath ecf=%v\n", configFilePath)
+		fmt.Printf("config.setupViper.ErrInvalidConfigFilePath ecf=%s\n", configFilePath)
+		return fmt.Errorf("config.ErrInvalidConfigFilePath ecf=%s\n", configFilePath)
 	}
 	viper.SetConfigFile(configFilePath)
 	err := viper.ReadInConfig()
 	if err != nil { // Handle errors reading the config file
-		return fmt.Errorf("config.ErrReadConfigFile ecf=%v message='%s'\n", configFilePath, err)
+		fmt.Printf("config.setupViper.ErrReadConfigFile ecf=%s message='%s'\n", configFilePath, err)
+		return fmt.Errorf("config.ErrReadConfigFile ecf=%s message='%s'\n", configFilePath, err)
 	}
-	configuration = &viperConfiguration{
+	fmt.Printf("config.settedViper ecf=%s\n", configFilePath)
+	return nil
+}
+
+func newViper() Configuration {
+	viperConfig := &viperConfiguration{
 		configFilePath: configFilePath,
 		viper:          viper.GetViper(),
 	}
-	fmt.Printf("config.settedViper configuration=%s\n", configuration)
-	return nil
+	fmt.Printf("config.newerViper viper=%s\n", viperConfig)
+	return viperConfig
 }

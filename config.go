@@ -3,14 +3,14 @@ package config
 import (
 	"flag"
 	//"fmt"
+	"github.com/matryer/resync"
 	"strings"
-	"sync"
 	"time"
 )
 
 var (
-	once     sync.Once
-	ecfgOnce sync.Once
+	once    resync.Once
+	ecfOnce resync.Once
 )
 
 // func init() {
@@ -25,6 +25,7 @@ func Get() Configuration {
 			if setupErr != nil {
 				panic(setupErr)
 			}
+			configuration = newViper()
 		}
 	})
 	return configuration
@@ -32,7 +33,7 @@ func Get() Configuration {
 
 //Setup initializes the package
 func Setup() error {
-	ecfgOnce.Do(func() {
+	ecfOnce.Do(func() {
 		if strings.TrimSpace(configFilePath) == "" {
 			flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
 		}

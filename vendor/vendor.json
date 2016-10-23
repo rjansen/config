@@ -75,6 +75,12 @@
 			"revisionTime": "2016-09-08T09:36:58Z"
 		},
 		{
+			"checksumSHA1": "UlJlaWJmybGO2BvHO8pztJ4PK3M=",
+			"path": "github.com/matryer/resync",
+			"revision": "fe19c89a748b39c5c70d27dc044ff64aee0b4f99",
+			"revisionTime": "2016-06-30T15:46:34Z"
+		},
+		{
 			"checksumSHA1": "UuXgD2dDojfS8AViUEe15gLIWZE=",
 			"path": "github.com/mitchellh/mapstructure",
 			"revision": "f3009df150dadf309fdee4a54ed65c124afad715",
