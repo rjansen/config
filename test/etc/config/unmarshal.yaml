@@ -1,0 +1,7 @@
+version: "unmarshal"
+type: "yaml"
+
+subConfig:
+    id: "identifier"
+    ttl: 1024
+    isPersistent: false
