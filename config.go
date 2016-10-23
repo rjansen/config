@@ -10,7 +10,6 @@ import (
 
 var (
 	once           resync.Once
-	ecfOnce        resync.Once
 	configuration  Configuration
 	configFilePath string
 )
@@ -25,8 +24,7 @@ func Get() Configuration {
 	once.Do(func() {
 		if configuration == nil {
 			fmt.Println("config.Get.Setup")
-			setupErr := Setup()
-			if setupErr != nil {
+			if setupErr := Setup(); setupErr != nil {
 				panic(setupErr)
 			}
 			configuration = newViper()
