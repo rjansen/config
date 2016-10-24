@@ -2,20 +2,24 @@ package config
 
 import (
 	"flag"
-	//"fmt"
 	"fmt"
 	"github.com/matryer/resync"
+	"os"
+	"strconv"
 	"time"
 )
 
 var (
+	debug          bool
 	once           resync.Once
 	configuration  Configuration
 	configFilePath string
 )
 
 func init() {
-	fmt.Println("config.init")
+	// os.Setenv("ECONFIG_DEBUG", "true")
+	debug, _ = strconv.ParseBool(os.Getenv("ECONFIG_DEBUG"))
+	fmt.Printf("config.init debug=%t\n", debug)
 	flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
 }
 
@@ -23,7 +27,9 @@ func init() {
 func Get() Configuration {
 	once.Do(func() {
 		if configuration == nil {
-			fmt.Println("config.Get.Setup")
+			if debug {
+				fmt.Println("config.Get.Setup")
+			}
 			if setupErr := Setup(); setupErr != nil {
 				panic(setupErr)
 			}

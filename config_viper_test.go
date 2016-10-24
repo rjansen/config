@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+var (
+	testArgs = os.Args
+)
+
 func clean(t assert.TestingT) {
 	reset(t)
 }
@@ -19,10 +23,11 @@ func reset(t assert.TestingT) {
 }
 
 func TestSetupConfigSuccessfully(t *testing.T) {
+	os.Args = append(os.Args, "-ecf", "")
 	mockConfigPaths := []string{"./test/etc/config/config.yaml", "./test/etc/config/config.json"}
 	for _, v := range mockConfigPaths {
 		clean(t)
-		os.Args = []string{"config_utests", "-ecf", v}
+		os.Args = append(testArgs, "-ecf", v)
 		setupErr := Setup()
 		assert.Nil(t, setupErr)
 		assert.Equal(t, configFilePath, v)
@@ -44,7 +49,7 @@ func TestSetupConfigErr(t *testing.T) {
 	}
 	for _, v := range cases {
 		clean(t)
-		os.Args = []string{"config_utests", "-ecf", v.configFilePath}
+		os.Args = append(testArgs, "-ecf", v.configFilePath)
 		setupErr := Setup()
 		assert.NotNil(t, setupErr)
 		assert.Contains(t, setupErr.Error(), v.errContains)
@@ -61,8 +66,9 @@ func TestGetConfigSuccessfully(t *testing.T) {
 		{"./test/etc/config/config.json", "config.yaml", "yaml"},
 		{"./test/etc/config/config.json", "config.yaml", "yaml"},
 	}
+	os.Args = append(os.Args, "-ecf", "")
 	for _, v := range cases {
-		os.Args = []string{"config_utests", "-ecf", v.ecf}
+		os.Args = append(testArgs, "-ecf", v.ecf)
 		cfg := Get()
 		assert.NotNil(t, cfg)
 		assert.Contains(t, viper.ConfigFileUsed(), v.configFile)
@@ -74,7 +80,7 @@ func TestGetConfigSuccessfully(t *testing.T) {
 
 func TestGetPanic(t *testing.T) {
 	clean(t)
-	os.Args = []string{"config_utests", "-ecf", ""}
+	os.Args = append(testArgs, "-ecf", "")
 	assert.Panics(t, func() {
 		Get()
 	})
@@ -82,7 +88,7 @@ func TestGetPanic(t *testing.T) {
 
 func TestGenericUnmarshalSuccessfully(t *testing.T) {
 	clean(t)
-	os.Args = []string{"config_utests", "-ecf", "./test/etc/config/unmarshal.yaml"}
+	os.Args = append(testArgs, "-ecf", "./test/etc/config/unmarshal.yaml")
 	cfg := Get()
 	assert.NotNil(t, cfg)
 	configMap := make(map[string]interface{})
@@ -113,8 +119,34 @@ func TestStructUnmarshalSuccessfully(t *testing.T) {
 		} `json:"subConfig" mapstructure:"subConfig"`
 	}{}
 	clean(t)
-	os.Args = []string{"config_utests", "-ecf", "./test/etc/config/unmarshal.yaml"}
+	os.Args = append(testArgs, "-ecf", "./test/etc/config/unmarshal.yaml")
 	var err error
+	err = Unmarshal(&config)
+	assert.Nil(t, err)
+
+	assert.NotZero(t, config)
+	assert.NotZero(t, config.Version)
+	assert.NotZero(t, config.ConfigType)
+	assert.NotZero(t, config.Sub)
+	assert.NotZero(t, config.Sub.ID)
+	assert.NotZero(t, config.Sub.TTL)
+	assert.False(t, config.Sub.Persistent)
+}
+
+func TestStructUnmarshalVarSuccessfully(t *testing.T) {
+	type Cfg struct {
+		Version    string `json:"version" mapstructure:"version"`
+		ConfigType string `json:"type" mapstructure:"type"`
+		Sub        struct {
+			ID         string `json:"id" mapstructure:"id"`
+			TTL        int    `json:"ttl" mapstructure:"ttl"`
+			Persistent bool   `json:"isPersistent" mapstructure:"isPersistent"`
+		} `json:"subConfig" mapstructure:"subConfig"`
+	}
+	clean(t)
+	os.Args = append(testArgs, "-ecf", "./test/etc/config/unmarshal.yaml")
+	var err error
+	var config *Cfg
 	err = Unmarshal(&config)
 	assert.Nil(t, err)
 
@@ -134,7 +166,7 @@ func TestUnmarshalKeySuccessfully(t *testing.T) {
 		Persistent bool   `json:"isPersistent" mapstructure:"isPersistent"`
 	}{}
 	clean(t)
-	os.Args = []string{"config_utests", "-ecf", "./test/etc/config/unmarshal.yaml"}
+	os.Args = append(testArgs, "-ecf", "./test/etc/config/unmarshal.yaml")
 	var err error
 	err = UnmarshalKey("subConfig", &config)
 	assert.Nil(t, err)
@@ -147,7 +179,7 @@ func TestUnmarshalKeySuccessfully(t *testing.T) {
 
 func TestGetKeysSuccessfully(t *testing.T) {
 	clean(t)
-	os.Args = []string{"config_utests", "-ecf", "./test/etc/config/alltypes.yaml"}
+	os.Args = append(testArgs, "-ecf", "./test/etc/config/alltypes.yaml")
 	assert.Equal(t, GetInterface("version"), "alltypes")
 	assert.Equal(t, GetBool("boolKey"), true)
 	assert.Equal(t, GetDuration("durationKey"), (time.Second*10)+time.Millisecond)

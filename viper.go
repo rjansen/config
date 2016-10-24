@@ -95,7 +95,9 @@ func setupViper() error {
 		fmt.Printf("config.setupViper.ErrReadConfigFile ecf=%s message='%s'\n", configFilePath, err)
 		return fmt.Errorf("config.ErrReadConfigFile ecf=%s message='%s'\n", configFilePath, err)
 	}
-	fmt.Printf("config.settedViper ecf=%s\n", configFilePath)
+	if debug {
+		fmt.Printf("config.settedViper ecf=%s\n", configFilePath)
+	}
 	return nil
 }
 
@@ -104,6 +106,8 @@ func newViper() Configuration {
 		configFilePath: configFilePath,
 		viper:          viper.GetViper(),
 	}
-	fmt.Printf("config.newerViper viper=%s\n", viperConfig)
+	if debug {
+		fmt.Printf("config.newerViper viper=%s\n", viperConfig)
+	}
 	return viperConfig
 }
