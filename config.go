@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/matryer/resync"
-	"os"
-	"strconv"
 	"time"
 )
 
@@ -17,9 +15,11 @@ var (
 )
 
 func init() {
-	// os.Setenv("ECONFIG_DEBUG", "true")
-	debug, _ = strconv.ParseBool(os.Getenv("ECONFIG_DEBUG"))
-	fmt.Printf("config.init debug=%t\n", debug)
+	// Env = "ECONFIG_DEBUG"
+	flag.BoolVar(&debug, "debug", false, "Debug the system initialization")
+	if debug {
+		fmt.Printf("config.init debug=%t\n", debug)
+	}
 	flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
 }
 
@@ -42,6 +42,10 @@ func Get() Configuration {
 //Setup initializes the package
 func Setup() error {
 	return setupViper()
+}
+
+func Debug() bool {
+	return debug
 }
 
 func GetInterface(key string) interface{} {

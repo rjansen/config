@@ -18,6 +18,10 @@ func (v viperConfiguration) String() string {
 	return fmt.Sprintf("viperConfiguration configFilePath=%s viperIsNil=%t", v.configFilePath, v.viper == nil)
 }
 
+func (v viperConfiguration) Debug() bool {
+	return debug
+}
+
 func (v viperConfiguration) GetInterface(key string) interface{} {
 	return v.viper.Get(key)
 }
@@ -90,8 +94,7 @@ func setupViper() error {
 		return fmt.Errorf("config.ErrInvalidConfigFilePath ecf=%s\n", configFilePath)
 	}
 	viper.SetConfigFile(configFilePath)
-	err := viper.ReadInConfig()
-	if err != nil { // Handle errors reading the config file
+	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("config.setupViper.ErrReadConfigFile ecf=%s message='%s'\n", configFilePath, err)
 		return fmt.Errorf("config.ErrReadConfigFile ecf=%s message='%s'\n", configFilePath, err)
 	}

@@ -6,6 +6,7 @@ import (
 
 //Configuration is an interface to abstract the system parameters access
 type Configuration interface {
+	Debug() bool
 	GetInterface(key string) interface{}
 	GetBool(key string) bool
 	GetDuration(key string) time.Duration
