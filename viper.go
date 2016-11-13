@@ -89,6 +89,9 @@ func (v viperConfiguration) UnmarshalKey(key string, rawVal interface{}) error {
 
 func setupViper() error {
 	flag.Parse()
+	if debug {
+		fmt.Printf("config.setupViper debug=%t ecf=%s\n", debug, configFilePath)
+	}
 	if strings.TrimSpace(configFilePath) == "" {
 		fmt.Printf("config.setupViper.ErrInvalidConfigFilePath ecf=%s\n", configFilePath)
 		return fmt.Errorf("config.ErrInvalidConfigFilePath ecf=%s\n", configFilePath)
@@ -99,7 +102,7 @@ func setupViper() error {
 		return fmt.Errorf("config.ErrReadConfigFile ecf=%s message='%s'\n", configFilePath, err)
 	}
 	if debug {
-		fmt.Printf("config.settedViper ecf=%s\n", configFilePath)
+		fmt.Printf("config.viperSetted ecf=%s\n", configFilePath)
 	}
 	return nil
 }

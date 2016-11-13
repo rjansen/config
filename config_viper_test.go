@@ -23,15 +23,15 @@ func reset(t assert.TestingT) {
 }
 
 func TestSetupConfigSuccessfully(t *testing.T) {
-	os.Args = append(os.Args, "-ecf", "")
 	mockConfigPaths := []string{"./test/etc/config/config.yaml", "./test/etc/config/config.json"}
 	for _, v := range mockConfigPaths {
 		clean(t)
-		os.Args = append(testArgs, "-ecf", v)
+		os.Args = append(testArgs, "-ecf", v, "-debug")
 		setupErr := Setup()
 		assert.Nil(t, setupErr)
 		assert.Equal(t, configFilePath, v)
 		assert.Contains(t, viper.ConfigFileUsed(), v[1:])
+		assert.True(t, Debug())
 		assert.True(t, InConfig("version"))
 		assert.True(t, InConfig("type"))
 		assert.Equal(t, GetString("type"), path.Ext(configFilePath)[1:])

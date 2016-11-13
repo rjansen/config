@@ -17,9 +17,6 @@ var (
 func init() {
 	// Env = "ECONFIG_DEBUG"
 	flag.BoolVar(&debug, "debug", false, "Debug the system initialization")
-	if debug {
-		fmt.Printf("config.init debug=%t\n", debug)
-	}
 	flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
 }
 
@@ -28,7 +25,7 @@ func Get() Configuration {
 	once.Do(func() {
 		if configuration == nil {
 			if debug {
-				fmt.Println("config.Get.Setup")
+				fmt.Println("config.Get.New")
 			}
 			if setupErr := Setup(); setupErr != nil {
 				panic(setupErr)
@@ -44,8 +41,9 @@ func Setup() error {
 	return setupViper()
 }
 
+//Debug is the getter for debug flag
 func Debug() bool {
-	return debug
+	return Get().Debug()
 }
 
 func GetInterface(key string) interface{} {
