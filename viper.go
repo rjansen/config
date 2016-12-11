@@ -1,4 +1,4 @@
-package config
+package migi
 
 import (
 	"flag"

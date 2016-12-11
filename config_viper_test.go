@@ -1,4 +1,4 @@
-package config
+package migi
 
 import (
 	"github.com/spf13/viper"

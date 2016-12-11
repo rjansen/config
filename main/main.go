@@ -1,12 +1,12 @@
 package main
 
 import (
-	"farm.e-pedion.com/repo/config"
 	"fmt"
+	"github.com/rjansen/migi"
 )
 
 var (
-	cfg = config.Get()
+	cfg = migi.Get()
 )
 
 func init() {
