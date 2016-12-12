@@ -1,2 +1,2 @@
-# config
-A library to abstract configuration
+# migi
+A library that wraps viper to provide dynamic system configuration
