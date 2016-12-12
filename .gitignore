@@ -1,4 +1,4 @@
-config*coverage*
+migi*coverage*
 vendor/*/
 *.pprof
 *.test
