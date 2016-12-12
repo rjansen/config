@@ -26,7 +26,7 @@ func TestSetupConfigSuccessfully(t *testing.T) {
 	mockConfigPaths := []string{"./test/etc/config/config.yaml", "./test/etc/config/config.json"}
 	for _, v := range mockConfigPaths {
 		clean(t)
-		os.Args = append(testArgs, "-ecf", v, "-debug")
+		os.Args = append(testArgs, "-ecf", v, "-edf")
 		setupErr := Setup()
 		assert.Nil(t, setupErr)
 		assert.Equal(t, configFilePath, v)

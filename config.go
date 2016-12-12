@@ -16,7 +16,7 @@ var (
 
 func init() {
 	// Env = "ECONFIG_DEBUG"
-	flag.BoolVar(&debug, "debug", false, "Debug the system initialization")
+	flag.BoolVar(&debug, "edf", false, "Debug the system initialization")
 	flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
 }
 
