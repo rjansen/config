@@ -105,6 +105,12 @@
 			"revisionTime": "2016-01-10T10:55:54Z"
 		},
 		{
+			"checksumSHA1": "7b3R3L73YzqkYvHwpLvmhQeAWvU=",
+			"path": "github.com/rjansen/migi",
+			"revision": "817d8f8635355b691a9a3fe714ee8cbd9a5fe43d",
+			"revisionTime": "2016-12-12T00:29:21Z"
+		},
+		{
 			"checksumSHA1": "KEzQv4I7c+tcoTizQM+tavqKsuM=",
 			"path": "github.com/spf13/afero",
 			"revision": "2f30b2a92c0e5700bcfe4715891adb1f2a7a406d",
