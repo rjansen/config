@@ -194,3 +194,17 @@ func TestGetKeysSuccessfully(t *testing.T) {
 	assert.NotZero(t, GetTime("timeKey"))
 	assert.True(t, IsSet("type"))
 }
+
+func TestUnitSetEnvPrefix(t *testing.T) {
+	prefix := "TESTK"
+	var1 := "1022998"
+	os.Setenv(prefix+"_VAR1", var1)
+	assert.Equal(t, var1, os.Getenv(prefix+"_VAR1"))
+	clean(t)
+	os.Args = append(testArgs, "-ecf", "./test/etc/config/config.yaml")
+
+	SetEnvPrefix(prefix)
+	BindEnv("my.sub.key.var", "TESTK_VAR1")
+	viperVar1 := GetString("my.sub.key.var")
+	assert.Equal(t, var1, viperVar1)
+}

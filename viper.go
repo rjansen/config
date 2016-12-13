@@ -87,6 +87,16 @@ func (v viperConfiguration) UnmarshalKey(key string, rawVal interface{}) error {
 	return v.viper.UnmarshalKey(key, rawVal)
 }
 
+//SetEnvPrefix sets a prefix to isolate the system variables
+func SetEnvPrefix(prefix string) {
+	viper.SetEnvPrefix(prefix)
+}
+
+//BindEnv sets a key value for a system variable
+func BindEnv(key string, env string) {
+	viper.BindEnv(key, env)
+}
+
 func setupViper() error {
 	flag.Parse()
 	if debug {
