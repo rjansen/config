@@ -16,10 +16,8 @@ var (
 
 func init() {
 	// Env = "ECONFIG_DEBUG"
-	once.Do(func() {
-		flag.BoolVar(&debug, "edf", false, "Debug the system initialization")
-		flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
-	})
+	flag.BoolVar(&debug, "edf", false, "Debug the system initialization")
+	flag.StringVar(&configFilePath, "ecf", "", "The file configuration path")
 }
 
 //Get returns the singleton instance of the Configuration
