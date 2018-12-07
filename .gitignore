@@ -4,3 +4,4 @@ migi*coverage*
 vendor/*/
 *.pprof
 *.test
+gotestsum*
