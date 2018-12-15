@@ -2,9 +2,16 @@ language: go
 
 go:
     - 1.11.x
-    - master
+      # cache:
+      #     - vendor
+      #     - on
+      #     - tmp
+      # 
+      # install: sudo make deps
+      # 
+      # script: make all
 
-script: make docker docker.all
+script: make docker.all
 
 notifications:
   email:

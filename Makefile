@@ -13,17 +13,23 @@ install.gvm:
 		curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
 
 .PHONY: install
-install: deps vendor
+install: deps
 	@echo "$(REPO) install"
 
 .PHONY: deps
 deps:
 	@echo "$(REPO) deps"
-	@which gotestsum || \
+	which gotestsum || (\
+		cd $(TMP_DIR) && \
 		curl -O -L https://github.com/gotestyourself/gotestsum/releases/download/v0.3.2/gotestsum_0.3.2_linux_amd64.tar.gz && \
 		tar xf gotestsum_0.3.2_linux_amd64.tar.gz && \
-		mv gotestsum /usr/local/bin
+		mv -y gotestsum /usr/local/bin \
+	)
 	gotestsum --help > /dev/null 2>&1
+
+.PHONY: debug.deps
+debug.deps:
+	@echo "$(REPO) deps"
 	which dlv || \
 		go get -u github.com/derekparker/delve/cmd/dlv
 	dlv version
