@@ -53,7 +53,7 @@ clean:
 .PHONY: clearcache
 clearcache:
 	-rm -Rf $(BASE_DIR)/on > /dev/null 2>&1
-	-cd $(BASE_DIR)/vendor && rm -Rf */ > /dev/null 2>&1
+	-rm -Rf $(BASE_DIR)/vendor > /dev/null 2>&1
 	-rm -Rf $(TMP_DIR) > /dev/null 2>&1
 
 .PHONY: local
