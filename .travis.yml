@@ -4,9 +4,10 @@ go:
     - 1.11.x
 
 cache:
-    - vendor
-    - on
-    - tmp
+    directories:
+        - vendor
+        - on
+        - tmp
 
 install: sudo make deps
 

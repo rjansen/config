@@ -16,14 +16,17 @@ install.gvm:
 install: deps
 	@echo "$(REPO) install"
 
+$(TMP_DIR):
+	mkdir -p $(TMP_DIR)
+
 .PHONY: deps
-deps:
+deps: $(TMP_DIR)
 	@echo "$(REPO) deps"
 	which gotestsum || (\
 		cd $(TMP_DIR) && \
 		curl -O -L https://github.com/gotestyourself/gotestsum/releases/download/v0.3.2/gotestsum_0.3.2_linux_amd64.tar.gz && \
 		tar xf gotestsum_0.3.2_linux_amd64.tar.gz && \
-		mv -y gotestsum /usr/local/bin \
+		mv -f gotestsum /usr/local/bin \
 	)
 	gotestsum --help > /dev/null 2>&1
 
@@ -46,7 +49,12 @@ clean:
 	-rm $(NAME)*coverage*
 	-rm *.test
 	-rm *.pprof
-	-rm gotestsum*
+
+.PHONY: clearcache
+clearcache:
+	-rm -Rf $(BASE_DIR)/on
+	-cd $(BASE_DIR)/vendor && rm -Rf */
+	-rm -Rf $(TMP_DIR)
 
 .PHONY: local
 local:
