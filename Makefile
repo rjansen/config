@@ -185,8 +185,8 @@ docker:
 .PHONY: docker.bash
 docker.bash:
 	@echo "$(REPO)@$(BUILD) docker.bash"
-	docker run --rm --name $(NAME) --entrypoint bash -it -u 1000 -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME)
+	docker run --rm --name $(NAME) --entrypoint bash -it -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME)
 
 docker.%:
 	@echo "$(REPO)@$(BUILD) docker.$*"
-	docker run --rm --name $(NAME) -u 1000 -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME) $*
+	docker run --rm --name $(NAME) -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME) $*
