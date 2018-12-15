@@ -11,7 +11,7 @@ go:
       # 
       # script: make all
 
-brefore_install: make docker
+before_install: make docker
 
 script: make docker.all
 
