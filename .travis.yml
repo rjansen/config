@@ -1,0 +1,5 @@
+langague: go
+
+go:
+    - 1.11.x
+    - master

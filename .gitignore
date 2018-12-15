@@ -1,7 +1,8 @@
 .DS_Store
 
-migi*coverage*
+on/
 vendor/*/
+migi*coverage*
 *.pprof
 *.test
 gotestsum*
