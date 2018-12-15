@@ -37,6 +37,7 @@ clean:
 	-rm $(NAME)*coverage*
 	-rm *.test
 	-rm *.pprof
+	-rm gotestsum*
 
 .PHONY: local
 local:
