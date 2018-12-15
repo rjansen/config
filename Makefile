@@ -46,15 +46,15 @@ vendor:
 .PHONY: clean
 clean:
 	@echo "$(REPO) clean"
-	-rm $(NAME)*coverage*
-	-rm *.test
-	-rm *.pprof
+	-rm $(NAME)*coverage* > /dev/null 2>&1
+	-rm *.test > /dev/null 2>&1
+	-rm *.pprof > /dev/null 2>&1
 
 .PHONY: clearcache
 clearcache:
-	-rm -Rf $(BASE_DIR)/on
-	-cd $(BASE_DIR)/vendor && rm -Rf */
-	-rm -Rf $(TMP_DIR)
+	-rm -Rf $(BASE_DIR)/on > /dev/null 2>&1
+	-cd $(BASE_DIR)/vendor && rm -Rf */ > /dev/null 2>&1
+	-rm -Rf $(TMP_DIR) > /dev/null 2>&1
 
 .PHONY: local
 local:
