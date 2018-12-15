@@ -3,3 +3,13 @@ language: go
 go:
     - 1.11.x
     - master
+
+script: make docker docker.all
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+
+services:
+  - docker

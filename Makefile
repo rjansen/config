@@ -3,6 +3,9 @@ include Makefile.vars
 .PHONY: default
 default: test
 
+.PHONY: all
+all: clean vendor vet coverage.text bench
+
 .PHONY: install.gvm
 install.gvm:
 	@echo "$(REPO) install.gvm"
@@ -28,8 +31,8 @@ deps:
 .PHONY: vendor
 vendor:
 	@echo "$(REPO) vendor"
-	GOCACHE=on GO111MODULE=on go mod vendor
-	GOCACHE=on GO111MODULE=on go mod verify
+	go mod vendor
+	go mod verify
 
 .PHONY: clean
 clean:
@@ -63,9 +66,6 @@ ifeq ($(ENV), )
 	exit 540
 endif
 
-.PHONY: all
-all: clean vet coverage.text bench
-
 .PHONY: fmt
 fmt:
 	@echo "$(REPO) fmt"
@@ -73,7 +73,7 @@ fmt:
 
 .PHONY: vet
 vet:
-	@echo "$(REPO) vet"
+	@echo "$(REPO) vet: $(PKGS)"
 	go vet $(PKGS)
 
 .PHONY: debug
