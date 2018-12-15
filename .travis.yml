@@ -2,23 +2,20 @@ language: go
 
 go:
     - 1.11.x
-      # cache:
-      #     - vendor
-      #     - on
-      #     - tmp
-      # 
-      # install: sudo make deps
-      # 
-      # script: make all
 
-before_install: make docker
+cache:
+    - vendor
+    - on
+    - tmp
 
-script: make docker.all
+install: sudo make deps
+
+script: make all
 
 notifications:
   email:
     on_success: change
     on_failure: always
 
-services:
-  - docker
+# services:
+# - docker
