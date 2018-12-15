@@ -180,13 +180,16 @@ release: checkenv coverage.text docker
 .PHONY: docker
 docker:
 	@echo "$(REPO)@$(BUILD) docker"
-	docker build -t $(DOCKER_NAME) -t $(DOCKER_NAME):$(VERSION) -f ./etc/docker/Dockerfile .
+	docker build --build-arg UID=$(shell id -u) --build-arg GID=$(shell id -g) \
+		         -t $(DOCKER_NAME) -t $(DOCKER_NAME):$(VERSION) -f ./etc/docker/Dockerfile .
 
 .PHONY: docker.bash
 docker.bash:
 	@echo "$(REPO)@$(BUILD) docker.bash"
-	docker run --rm --name $(NAME) --entrypoint bash -it -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME)
+	docker run --rm --name $(NAME) --entrypoint bash -it -u $(shell id -u):$(shell id -g) \
+			   -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME)
 
 docker.%:
 	@echo "$(REPO)@$(BUILD) docker.$*"
-	docker run --rm --name $(NAME) -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME) $*
+	docker run --rm --name $(NAME) -u $(shell id -u):$(shell id -g) \
+			   -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME) $*
