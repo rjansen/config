@@ -1,4 +1,4 @@
-migi [![Build Status](https://travis-ci.org/rjansen/migi.svg?branch=add-yggdrasil)](https://travis-ci.org/rjansen/migi)
+migi [![Build Status](https://travis-ci.org/rjansen/migi.svg?branch=master)](https://travis-ci.org/rjansen/migi)
 ====
 A helper library to configure software runtime
 
