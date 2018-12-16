@@ -157,7 +157,6 @@ coverage.html: coverage
 	open $(COVERAGE_HTML) || google-chrome $(COVERAGE_HTML) || google-chrome-stable $(COVERAGE_HTML)
 
 .PHONY: coverage.push
-.EXPORT_ALL_VARIABLES:
 coverage.push:
 	@echo "$(REPO) coverage.push"
 	@#curl -sL https://codecov.io/bash | bash -s - -f $(COVERAGE_FILE)$(if $(CODECOV_TOKEN), -t $(CODECOV_TOKEN),)
