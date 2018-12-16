@@ -39,6 +39,13 @@ deps: $(TMP_DIR)
 		mv -f gotestsum /usr/local/bin \
 	)
 	gotestsum --help > /dev/null 2>&1
+	which codecov || (\
+		cd $(TMP_DIR) && \
+		curl -L -o codecov https://codecov.io/bash && \
+		chmod a+x codecov && \
+		mv -f codecov /usr/local/bin \
+	)
+	codecov -h > /dev/null 2>&1
 
 .PHONY: debug.deps
 debug.deps:
@@ -124,13 +131,15 @@ coverage:
 	@touch $(COVERAGE_FILE)
 ifeq ($(TEST_PKGS),)
 	@echo "coverage: pkgs=*"
-	gotestsum -f short-verbose -- -tags=integration -v -run $(TESTS) -coverpkg=./... -coverprofile=$(COVERAGE_FILE) $(PKGS)
+	gotestsum -f short-verbose -- -tags=integration -v -run $(TESTS) \
+			  -covermode=atomic -coverpkg=./... -coverprofile=$(COVERAGE_FILE) $(PKGS)
 else
 	@echo "bench: pkgs=$(TEST_PKGS)"
 	@touch $(COVERAGE_PKG_FILE)
 	@echo 'mode: set' > $(COVERAGE_FILE)
 	$(foreach pkg,$(TEST_PKGS),\
-		gotestsum -f short-verbose -- -tags=integration -v -run $(TESTS) -coverpkg=./... -coverprofile=$(COVERAGE_PKG_FILE) $(REPO)/$(pkg);\
+		gotestsum -f short-verbose -- -tags=integration -v -run $(TESTS) \
+				  -covermode=atomic -coverpkg=./... -coverprofile=$(COVERAGE_PKG_FILE) $(REPO)/$(pkg);\
 		grep -v 'mode: set' $(COVERAGE_PKG_FILE) >> $(COVERAGE_FILE);\
 	)
 endif
@@ -146,9 +155,14 @@ coverage.html: coverage
 	go tool cover -html=$(COVERAGE_FILE) -o $(COVERAGE_HTML)
 	open $(COVERAGE_HTML) || google-chrome $(COVERAGE_HTML) || google-chrome-stable $(COVERAGE_HTML)
 
-.PHONY: release
-release: checkenv coverage.text docker
-	@echo "$(REPO) release"
+.PHONY: coverage.push
+coverage.push:
+	@echo "$(REPO) coverage.push"
+ifdef (CODECOV_TOKEN)
+	codecov -f $(COVERAGE_FILE) -t $(CODECOV_TOKEN)
+else
+	codecov -f $(COVERAGE_FILE)
+endif
 
 .PHONY: docker
 docker:

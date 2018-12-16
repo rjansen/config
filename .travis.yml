@@ -7,6 +7,8 @@ before_install: make docker
 
 script: make docker.ci
 
+after_success: make coverage.push
+
 notifications:
     email:
         on_success: change
