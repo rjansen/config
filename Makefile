@@ -1,10 +1,20 @@
 include Makefile.vars
 
-.PHONY: default
-default: test
+.PHONY: ci
+ci: vet coverage.text bench
 
-.PHONY: all
-all: clean vendor vet coverage.text bench
+.PHONY: clean
+clean:
+	@echo "$(REPO) clean"
+	-rm $(NAME)*coverage* > /dev/null 2>&1
+	-rm *.test > /dev/null 2>&1
+	-rm *.pprof > /dev/null 2>&1
+
+.PHONY: clearcache
+clearcache:
+	-rm -Rf $(BASE_DIR)/on > /dev/null 2>&1
+	-rm -Rf $(BASE_DIR)/vendor > /dev/null 2>&1
+	-rm -Rf $(TMP_DIR) > /dev/null 2>&1
 
 .PHONY: install.gvm
 install.gvm:
@@ -43,19 +53,6 @@ vendor:
 	go mod vendor
 	go mod verify
 
-.PHONY: clean
-clean:
-	@echo "$(REPO) clean"
-	-rm $(NAME)*coverage* > /dev/null 2>&1
-	-rm *.test > /dev/null 2>&1
-	-rm *.pprof > /dev/null 2>&1
-
-.PHONY: clearcache
-clearcache:
-	-rm -Rf $(BASE_DIR)/on > /dev/null 2>&1
-	-rm -Rf $(BASE_DIR)/vendor > /dev/null 2>&1
-	-rm -Rf $(TMP_DIR) > /dev/null 2>&1
-
 .PHONY: local
 local:
 	@echo "Set enviroment to local"
@@ -64,13 +61,13 @@ local:
 dev:
 	@echo "Set enviroment to dev"
 
-.PHONY: staging
-staging:
-	@echo "Set enviroment to staging"
+.PHONY: stg
+stg:
+	@echo "Set enviroment to stg"
 
-.PHONY: prod
-prod:
-	@echo "Set enviroment to prod"
+.PHONY: prd
+prd:
+	@echo "Set enviroment to prd"
 
 .PHONY: checkenv
 checkenv:
