@@ -53,30 +53,6 @@ vendor:
 	go mod vendor
 	go mod verify
 
-.PHONY: local
-local:
-	@echo "Set enviroment to local"
-
-.PHONY: dev
-dev:
-	@echo "Set enviroment to dev"
-
-.PHONY: stg
-stg:
-	@echo "Set enviroment to stg"
-
-.PHONY: prd
-prd:
-	@echo "Set enviroment to prd"
-
-.PHONY: checkenv
-checkenv:
-	@echo "$(REPO) checkenv"
-ifeq ($(ENV), )
-	echo "err_blank_env: env=$(ENV)"
-	exit 540
-endif
-
 .PHONY: fmt
 fmt:
 	@echo "$(REPO) fmt"
