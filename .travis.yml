@@ -1,12 +1,11 @@
 language: go
-sudo: true
 
 go:
     - 1.11.x
 
 before_install: make docker
 
-script: make docker.all
+script: make docker.ci
 
 notifications:
     email:
