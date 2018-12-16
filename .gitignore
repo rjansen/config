@@ -1,8 +1,7 @@
 .DS_Store
-
 on/
 vendor/
+tmp/
 migi*coverage*
 *.pprof
 *.test
-gotestsum*
