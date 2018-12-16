@@ -12,6 +12,7 @@ clean:
 
 .PHONY: clearcache
 clearcache:
+	@echo "$(REPO) clearcache"
 	-rm -Rf $(BASE_DIR)/on > /dev/null 2>&1
 	-rm -Rf $(BASE_DIR)/vendor > /dev/null 2>&1
 	-rm -Rf $(TMP_DIR) > /dev/null 2>&1
@@ -156,16 +157,14 @@ coverage.html: coverage
 	open $(COVERAGE_HTML) || google-chrome $(COVERAGE_HTML) || google-chrome-stable $(COVERAGE_HTML)
 
 .PHONY: coverage.push
+.EXPORT_ALL_VARIABLES:
 coverage.push:
 	@echo "$(REPO) coverage.push"
-ifdef (CODECOV_TOKEN)
-	codecov -f $(COVERAGE_FILE) -t $(CODECOV_TOKEN)
-else
-	codecov -f $(COVERAGE_FILE)
-endif
+	@#curl -sL https://codecov.io/bash | bash -s - -f $(COVERAGE_FILE)$(if $(CODECOV_TOKEN), -t $(CODECOV_TOKEN),)
+	@codecov -f $(COVERAGE_FILE)$(if $(CODECOV_TOKEN), -t $(CODECOV_TOKEN),)
 
 .PHONY: docker
-docker:
+docker.build:
 	@echo "$(REPO)@$(BUILD) docker"
 	docker build --build-arg UID=$(shell id -u) --build-arg GID=$(shell id -g) \
 		         -t $(DOCKER_NAME) -t $(DOCKER_NAME):$(VERSION) -f ./etc/docker/Dockerfile .
@@ -178,5 +177,5 @@ docker.bash:
 
 docker.%:
 	@echo "$(REPO)@$(BUILD) docker.$*"
-	docker run --rm --name $(NAME) -u $(shell id -u):$(shell id -g) \
-			   -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME) $*
+	@docker run --rm --name $(NAME) -u $(shell id -u):$(shell id -g) \
+    		    -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME) $*

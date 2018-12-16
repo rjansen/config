@@ -3,9 +3,9 @@ language: go
 go:
     - 1.11.x
 
-before_install: make docker
+install: make deps
 
-script: make docker.ci
+script: make ci
 
 after_success: make coverage.push
 
@@ -13,6 +13,3 @@ notifications:
     email:
         on_success: change
         on_failure: always
-
-services:
-    - docker
