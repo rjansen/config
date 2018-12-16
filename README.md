@@ -1,4 +1,4 @@
-# migi [![Build Status](https://travis-ci.org/rjansen/migi.svg?branch=master)](https://travis-ci.org/rjansen/migi) [![Coverage Status](https://codecov.io/gh/rjansen/migi/branch/fix%2Fclean-makefile/graph/badge.svg)](https://codecov.io/gh/rjansen/migi)
+# migi [![Build Status](https://travis-ci.org/rjansen/migi.svg?branch=master)](https://travis-ci.org/rjansen/migi) [![Coverage Status](https://codecov.io/gh/rjansen/migi/branch/master/graph/badge.svg)](https://codecov.io/gh/rjansen/migi)
 
 A helper library to configure software runtime
 
