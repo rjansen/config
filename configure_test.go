@@ -49,7 +49,7 @@ func TestNewOptions(test *testing.T) {
 				}
 			},
 			func(t *testing.T, scenario testNewOptions) {
-				for key, _ := range scenario.options {
+				for key := range scenario.options {
 					os.Unsetenv(strings.ToUpper(key))
 				}
 			},
