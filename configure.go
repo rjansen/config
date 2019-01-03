@@ -16,7 +16,7 @@ func NewOptions(sources ...OptionsSource) Options {
 }
 
 // NewEnvironmentSource creates an options source from session environment variables
-func NewEnviromentSource() OptionsSource {
+func NewEnvironmentSource() OptionsSource {
 	return configure.NewEnvironment()
 }
 

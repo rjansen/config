@@ -60,7 +60,7 @@ func TestNewOptions(test *testing.T) {
 				"keyint":  "10099",
 				"keybool": "true",
 			},
-			NewEnviromentSource(),
+			NewEnvironmentSource(),
 		),
 		newTestNewOptions(
 			"with json source options",
