@@ -12,35 +12,35 @@ import (
 )
 
 type (
-	testEnvironmentSource struct {
+	testSource struct {
 		name         string
-		setupTest    func(*testing.T, *testEnvironmentSource)
-		tearDownTest func(*testing.T, *testEnvironmentSource)
-		match        testEnvironmentSourceMatch
+		setupTest    func(*testing.T, *testSource)
+		tearDownTest func(*testing.T, *testSource)
+		match        testSourceMatch
 	}
 
-	testEnvironmentSourceMatch struct {
+	testSourceMatch struct {
 		options map[string]interface{}
 	}
 )
 
-func (e testEnvironmentSource) setup(t *testing.T) {
+func (e testSource) setup(t *testing.T) {
 	if e.setupTest != nil {
 		e.setupTest(t, &e)
 	}
 }
 
-func (e testEnvironmentSource) tearDown(t *testing.T) {
+func (e testSource) tearDown(t *testing.T) {
 	if e.tearDownTest != nil {
 		e.tearDownTest(t, &e)
 	}
 }
 
-func TestEnvironmentSource(t *testing.T) {
-	scenarios := []testEnvironmentSource{
+func TestSource(t *testing.T) {
+	scenarios := []testSource{
 		{
 			name: "load vars from environment",
-			setupTest: func(t *testing.T, _ *testEnvironmentSource) {
+			setupTest: func(t *testing.T, _ *testSource) {
 				os.Setenv("string_key", "string_value")
 				os.Setenv("int_key", "333")
 				os.Setenv("float_key", "333.33")
@@ -48,7 +48,7 @@ func TestEnvironmentSource(t *testing.T) {
 				os.Setenv("time_key", "2019-05-23T00:00:00Z")
 				os.Setenv("duration_key", "5m")
 			},
-			tearDownTest: func(t *testing.T, _ *testEnvironmentSource) {
+			tearDownTest: func(t *testing.T, _ *testSource) {
 				os.Unsetenv("string_key")
 				os.Unsetenv("int_key")
 				os.Unsetenv("float_key")
@@ -56,7 +56,7 @@ func TestEnvironmentSource(t *testing.T) {
 				os.Unsetenv("time_key")
 				os.Unsetenv("duration_key")
 			},
-			match: testEnvironmentSourceMatch{
+			match: testSourceMatch{
 				options: map[string]interface{}{
 					"string_key":   "string_value",
 					"int_key":      333,
@@ -76,9 +76,9 @@ func TestEnvironmentSource(t *testing.T) {
 				scenario.setup(t)
 				defer scenario.tearDown(t)
 
-				source := NewEnvironmentSource()
+				source := NewSource()
 				require.NotNil(t, source)
-				require.Implements(t, (*migi.OptionsSource)(nil), source)
+				require.Implements(t, (*migi.Source)(nil), source)
 				require.NoError(t, source.Load())
 
 				for key, value := range scenario.match.options {

@@ -5,25 +5,25 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rjansen/migi/internal/errors"
+	"github.com/rjansen/migi"
 )
 
-type environmentSource struct{}
+type source struct{}
 
-func (e *environmentSource) Load() error {
+func (e *source) Load() error {
 	return nil
 }
 
-func (e *environmentSource) lookup(name string) (string, error) {
+func (e *source) lookup(name string) (string, error) {
 	value, ok := os.LookupEnv(name)
 	if !ok {
-		return "", errors.NewOptionNotFound(name)
+		return "", migi.NewOptionNotFound(name)
 	}
 
 	return value, nil
 }
 
-func (e *environmentSource) String(name string) (string, error) {
+func (e *source) String(name string) (string, error) {
 	value, err := e.lookup(name)
 	if err != nil {
 		return "", err
@@ -32,7 +32,7 @@ func (e *environmentSource) String(name string) (string, error) {
 	return value, nil
 }
 
-func (e *environmentSource) Int(name string) (int, error) {
+func (e *source) Int(name string) (int, error) {
 	envValue, err := e.lookup(name)
 	if err != nil {
 		return 0, err
@@ -46,7 +46,7 @@ func (e *environmentSource) Int(name string) (int, error) {
 	return int(value), nil
 }
 
-func (e *environmentSource) Float(name string) (float32, error) {
+func (e *source) Float(name string) (float32, error) {
 	envValue, err := e.lookup(name)
 	if err != nil {
 		return 0, err
@@ -60,7 +60,7 @@ func (e *environmentSource) Float(name string) (float32, error) {
 	return float32(value), nil
 }
 
-func (e *environmentSource) Bool(name string) (bool, error) {
+func (e *source) Bool(name string) (bool, error) {
 	envValue, err := e.lookup(name)
 	if err != nil {
 		return false, err
@@ -74,7 +74,7 @@ func (e *environmentSource) Bool(name string) (bool, error) {
 	return value, nil
 }
 
-func (e *environmentSource) Time(name string) (time.Time, error) {
+func (e *source) Time(name string) (time.Time, error) {
 	envValue, err := e.lookup(name)
 	if err != nil {
 		return time.Time{}, err
@@ -88,7 +88,7 @@ func (e *environmentSource) Time(name string) (time.Time, error) {
 	return value, nil
 }
 
-func (e *environmentSource) Duration(name string) (time.Duration, error) {
+func (e *source) Duration(name string) (time.Duration, error) {
 	envValue, err := e.lookup(name)
 	if err != nil {
 		return time.Duration(0), err
@@ -102,6 +102,6 @@ func (e *environmentSource) Duration(name string) (time.Duration, error) {
 	return value, nil
 }
 
-func NewEnvironmentSource() *environmentSource {
-	return new(environmentSource)
+func NewSource() *source {
+	return new(source)
 }
