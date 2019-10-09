@@ -1,11 +1,12 @@
 package migi
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 	"time"
 
-	"github.com/rjansen/migi/internal/errors"
+	"github.com/rjansen/abend"
 	"github.com/rjansen/migi/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,20 +19,20 @@ type (
 	}
 
 	testOptions struct {
-		name    string
-		options []testOption
-		sources []OptionsSource
-		match   testOptionsMatch
+		name     string
+		options  []testOption
+		sources  []Source
+		expected testOptionsExpected
 	}
 
-	testOptionsMatch struct {
+	testOptionsExpected struct {
 		loadError error
 		options   map[string]interface{}
 	}
 )
 
 func TestOptions(t *testing.T) {
-	scenarios := []testOptions{
+	tests := []testOptions{
 		{
 			name: "when all requested var exists",
 			options: []testOption{
@@ -48,8 +49,8 @@ func TestOptions(t *testing.T) {
 				{name: "default_time_key", value: testutils.TimePointer(testutils.NewTime(t, "2006-01-02", "2012-05-30"))},
 				{name: "default_duration_key", value: testutils.DurationPointer(time.Second * 60)},
 			},
-			sources: []OptionsSource{
-				&mockOptionsSource{
+			sources: []Source{
+				&mockSource{
 					options: map[string]interface{}{
 						"string_key":   "string_value",
 						"int_key":      333,
@@ -60,7 +61,7 @@ func TestOptions(t *testing.T) {
 					},
 				},
 			},
-			match: testOptionsMatch{
+			expected: testOptionsExpected{
 				options: map[string]interface{}{
 					"string_key":           "string_value",
 					"int_key":              333,
@@ -79,18 +80,18 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "when load raises error",
-			sources: []OptionsSource{
-				&mockOptionsSource{
+			sources: []Source{
+				&mockSource{
 					loadError: errors.New("mock_error_1"),
 				},
-				&mockOptionsSource{
+				&mockSource{
 					loadError: errors.New("mock_error_2"),
 				},
-				&mockOptionsSource{
+				&mockSource{
 					loadError: errors.New("mock_error_3"),
 				},
 			},
-			match: testOptionsMatch{
+			expected: testOptionsExpected{
 				loadError: errors.New("errors.List{mock_error_1, mock_error_2, mock_error_3}"),
 			},
 		},
@@ -105,8 +106,8 @@ func TestOptions(t *testing.T) {
 				{name: "time_key", value: testutils.TimePointer(time.Time{})},
 				{name: "duration_key", value: testutils.DurationPointer(time.Duration(0))},
 			},
-			sources: []OptionsSource{
-				&mockOptionsSource{
+			sources: []Source{
+				&mockSource{
 					options: map[string]interface{}{
 						"string_key":       errors.New("mock_err_string_key"),
 						"int_key":          errors.New("mock_err_int_key"),
@@ -118,8 +119,8 @@ func TestOptions(t *testing.T) {
 					},
 				},
 			},
-			match: testOptionsMatch{
-				loadError: errors.NewList(
+			expected: testOptionsExpected{
+				loadError: abend.NewList(
 					errors.New("mock_err_string_key"),
 					errors.New("mock_err_int_key"),
 					errors.New("errors.OptionInvalidType{Name='invalid_type_key', Source='string', Target='int'}"),
@@ -131,9 +132,9 @@ func TestOptions(t *testing.T) {
 			},
 		},
 	}
-	for index, scenario := range scenarios {
+	for index, test := range tests {
 		t.Run(
-			testutils.TestName(t, scenario.name, index),
+			testutils.TestName(t, test.name, index),
 			func(t *testing.T) {
 				var (
 					stringOptions   = make(map[string]*string)
@@ -142,12 +143,12 @@ func TestOptions(t *testing.T) {
 					boolOptions     = make(map[string]*bool)
 					timeOptions     = make(map[string]*time.Time)
 					durationOptions = make(map[string]*time.Duration)
-					options         = NewOptions(scenario.sources...)
+					options         = NewOptions(test.sources...)
 				)
 
 				require.NotNil(t, options)
 
-				for _, option := range scenario.options {
+				for _, option := range test.options {
 					switch value := option.value.(type) {
 					case *string:
 						stringOptions[option.name] = options.String(
@@ -177,13 +178,13 @@ func TestOptions(t *testing.T) {
 				}
 
 				loadError := options.Load()
-				if scenario.match.loadError != nil {
-					require.EqualError(t, loadError, scenario.match.loadError.Error())
+				if test.expected.loadError != nil {
+					require.EqualError(t, loadError, test.expected.loadError.Error())
 				} else {
 					require.Nil(t, loadError)
 				}
 
-				for key, value := range scenario.match.options {
+				for key, value := range test.expected.options {
 					switch value.(type) {
 					case string:
 						assert.Equal(t, value, *stringOptions[key])
@@ -202,5 +203,4 @@ func TestOptions(t *testing.T) {
 			},
 		)
 	}
-
 }

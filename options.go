@@ -3,36 +3,36 @@ package migi
 import (
 	"time"
 
-	"github.com/rjansen/migi/internal/errors"
+	"github.com/rjansen/abend"
 )
 
-// Options is an interface wich provides access to sofwatre configuration
 type (
+	// Options is an interface wich provides access to software configuration
 	Options interface {
-		String(string, string, string) *string
-		StringVar(*string, string, string, string)
-		Int(string, int, string) *int
-		IntVar(*int, string, int, string)
-		Bool(string, bool, string) *bool
-		BoolVar(*bool, string, bool, string)
-		Float(string, float32, string) *float32
-		FloatVar(*float32, string, float32, string)
-		Time(string, time.Time, string) *time.Time
-		TimeVar(*time.Time, string, time.Time, string)
-		Duration(string, time.Duration, string) *time.Duration
-		DurationVar(*time.Duration, string, time.Duration, string)
+		String(name string, defaultValue string, description string) *string
+		StringVar(pointer *string, name string, defaultValue string, description string)
+		Int(name string, defaultValue int, description string) *int
+		IntVar(pointer *int, name string, defaultValue int, description string)
+		Bool(name string, defaultValue bool, description string) *bool
+		BoolVar(pointer *bool, name string, defaultValue bool, description string)
+		Float(name string, defaultValue float32, description string) *float32
+		FloatVar(pointer *float32, name string, defaultValue float32, description string)
+		Time(name string, defaultValue time.Time, description string) *time.Time
+		TimeVar(pointer *time.Time, name string, defaultValue time.Time, description string)
+		Duration(name string, defaultValue time.Duration, description string) *time.Duration
+		DurationVar(pointer *time.Duration, name string, defaultValue time.Duration, description string)
 		Load() error
 	}
 
-	// OptionsSource is an interface to define how options are loaded
-	OptionsSource interface {
+	// Source is an interface to define how options are loaded
+	Source interface {
 		Load() error
-		Bool(string) (bool, error)
-		Int(string) (int, error)
-		Float(string) (float32, error)
-		Time(string) (time.Time, error)
-		Duration(string) (time.Duration, error)
-		String(string) (string, error)
+		Bool(name string) (bool, error)
+		Int(name string) (int, error)
+		Float(name string) (float32, error)
+		Time(name string) (time.Time, error)
+		Duration(name string) (time.Duration, error)
+		String(name string) (string, error)
 	}
 
 	// option is a configured value
@@ -47,16 +47,16 @@ type (
 	// options is a default Options implementation
 	options struct {
 		register []*option
-		sources  []OptionsSource
+		sources  []Source
 	}
 )
 
-func (o *option) scan(sources ...OptionsSource) []error {
+func (o *option) scan(sources ...Source) []error {
 	var errs []error
 	for _, source := range sources {
 		err := o.read(source)
 		if err != nil {
-			if _, is := err.(errors.OptionNotFound); !is {
+			if _, is := err.(OptionNotFound); !is {
 				errs = append(errs, err)
 			}
 			continue
@@ -71,7 +71,7 @@ func (o *option) scan(sources ...OptionsSource) []error {
 	return nil
 }
 
-func (o *option) read(source OptionsSource) error {
+func (o *option) read(source Source) error {
 	switch pointer := o.pointer.(type) {
 	case *string:
 		value, err := source.String(o.name)
@@ -110,7 +110,7 @@ func (o *option) read(source OptionsSource) error {
 		}
 		*pointer = value
 	default:
-		return errors.NewOptionInvalidType(o.name, o.pointer, "[*string, *int, *float, *bool, *time.Time, *time.Duration]")
+		return NewOptionInvalidType(o.name, o.pointer, "[*string, *int, *float, *bool, *time.Time, *time.Duration]")
 	}
 
 	return nil
@@ -252,7 +252,7 @@ func (o *options) DurationVar(pointer *time.Duration, name string, defaultValue 
 }
 
 func (o *options) loadSources() error {
-	var errs errors.List
+	var errs []error
 	for _, source := range o.sources {
 		err := source.Load()
 		if err != nil {
@@ -260,7 +260,7 @@ func (o *options) loadSources() error {
 		}
 	}
 	if len(errs) > 0 {
-		return errs
+		return abend.NewList(errs...)
 	}
 	return nil
 }
@@ -271,7 +271,7 @@ func (o *options) Load() error {
 		return err
 	}
 
-	var errs errors.List
+	var errs []error
 	for _, option := range o.register {
 		scanErrs := option.scan(o.sources...)
 		if len(scanErrs) > 0 {
@@ -285,14 +285,14 @@ func (o *options) Load() error {
 	}
 
 	if len(errs) > 0 {
-		return errs
+		return abend.NewList(errs...)
 	}
 
 	return nil
 }
 
 // NewOptions creates an options instance with the provided sources
-func NewOptions(sources ...OptionsSource) Options {
+func NewOptions(sources ...Source) Options {
 	return &options{
 		sources: sources,
 	}

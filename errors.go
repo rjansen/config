@@ -1,35 +1,8 @@
-package errors
+package migi
 
 import (
-	"errors"
 	"fmt"
-	"strings"
 )
-
-var New = errors.New
-
-type List []error
-
-func NewList(errs ...error) List {
-	return List(errs)
-}
-
-func (list List) Error() string {
-	switch len(list) {
-	case 0:
-		return ""
-	case 1:
-		return "errors.List{" + list[0].Error() + "}"
-	}
-	var builder strings.Builder
-	builder.WriteString("errors.List{" + list[0].Error())
-	for _, err := range list[1:] {
-		builder.WriteString(", ")
-		builder.WriteString(err.Error())
-	}
-	builder.WriteString("}")
-	return builder.String()
-}
 
 type OptionNotFound struct {
 	Name string
