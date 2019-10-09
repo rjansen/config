@@ -13,13 +13,13 @@ import (
 )
 
 type (
-	testJSONSource struct {
+	testSource struct {
 		name    string
 		jsonRaw []byte
-		match   testJSONSourceMatch
+		match   testSourceMatch
 	}
 
-	testJSONSourceMatch struct {
+	testSourceMatch struct {
 		loadError error
 		options   map[string]interface{}
 	}
@@ -36,7 +36,7 @@ func newTime(t *testing.T, str string) time.Time {
 }
 
 func TestEnvironmentSource(t *testing.T) {
-	scenarios := []testJSONSource{
+	scenarios := []testSource{
 		{
 			name: "load vars from json",
 			jsonRaw: []byte(`{
@@ -50,7 +50,7 @@ func TestEnvironmentSource(t *testing.T) {
 				"float_string_key": "555.78",
 				"bool_string_key": "true"
 			}`),
-			match: testJSONSourceMatch{
+			match: testSourceMatch{
 				options: map[string]interface{}{
 					"string_key":       "string_value",
 					"int_key":          333,
@@ -70,9 +70,9 @@ func TestEnvironmentSource(t *testing.T) {
 		t.Run(
 			testName(index, scenario.name),
 			func(t *testing.T) {
-				source := NewJSONSource(bytes.NewReader(scenario.jsonRaw))
+				source := NewSource(bytes.NewReader(scenario.jsonRaw))
 				require.NotNil(t, source)
-				require.Implements(t, (*migi.OptionsSource)(nil), source)
+				require.Implements(t, (*migi.Source)(nil), source)
 
 				loadError := source.Load()
 				if scenario.match.loadError != nil {

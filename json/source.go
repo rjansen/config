@@ -6,28 +6,28 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rjansen/migi/internal/errors"
+	"github.com/rjansen/migi"
 )
 
-type jsonSource struct {
+type source struct {
 	reader  io.Reader
 	options map[string]interface{}
 }
 
-func (e *jsonSource) Load() error {
+func (e *source) Load() error {
 	return json.NewDecoder(e.reader).Decode(&e.options)
 }
 
-func (e *jsonSource) lookup(name string) (interface{}, error) {
+func (e *source) lookup(name string) (interface{}, error) {
 	value, ok := e.options[name]
 	if !ok {
-		return nil, errors.NewOptionNotFound(name)
+		return nil, migi.NewOptionNotFound(name)
 	}
 
 	return value, nil
 }
 
-func (e *jsonSource) String(name string) (string, error) {
+func (e *source) String(name string) (string, error) {
 	value, err := e.lookup(name)
 	if err != nil {
 		return "", err
@@ -35,13 +35,13 @@ func (e *jsonSource) String(name string) (string, error) {
 
 	strValue, is := value.(string)
 	if !is {
-		return "", errors.NewOptionInvalidType(name, value, "string")
+		return "", migi.NewOptionInvalidType(name, value, "string")
 	}
 
 	return strValue, nil
 }
 
-func (e *jsonSource) Int(name string) (int, error) {
+func (e *source) Int(name string) (int, error) {
 	value, err := e.lookup(name)
 	if err != nil {
 		return 0, err
@@ -57,11 +57,11 @@ func (e *jsonSource) Int(name string) (int, error) {
 	case float64:
 		return int(rawValue), nil
 	default:
-		return 0, errors.NewOptionInvalidType(name, value, "int")
+		return 0, migi.NewOptionInvalidType(name, value, "int")
 	}
 }
 
-func (e *jsonSource) Float(name string) (float32, error) {
+func (e *source) Float(name string) (float32, error) {
 	value, err := e.lookup(name)
 	if err != nil {
 		return 0, err
@@ -77,11 +77,11 @@ func (e *jsonSource) Float(name string) (float32, error) {
 	case float64:
 		return float32(rawValue), nil
 	default:
-		return 0, errors.NewOptionInvalidType(name, value, "float")
+		return 0, migi.NewOptionInvalidType(name, value, "float")
 	}
 }
 
-func (e *jsonSource) Bool(name string) (bool, error) {
+func (e *source) Bool(name string) (bool, error) {
 	value, err := e.lookup(name)
 	if err != nil {
 		return false, err
@@ -97,11 +97,11 @@ func (e *jsonSource) Bool(name string) (bool, error) {
 	case bool:
 		return rawValue, nil
 	default:
-		return false, errors.NewOptionInvalidType(name, value, "float")
+		return false, migi.NewOptionInvalidType(name, value, "float")
 	}
 }
 
-func (e *jsonSource) Time(name string) (time.Time, error) {
+func (e *source) Time(name string) (time.Time, error) {
 	value, err := e.lookup(name)
 	if err != nil {
 		return time.Time{}, err
@@ -117,11 +117,11 @@ func (e *jsonSource) Time(name string) (time.Time, error) {
 	case time.Time:
 		return rawValue, nil
 	default:
-		return time.Time{}, errors.NewOptionInvalidType(name, value, "time.Time")
+		return time.Time{}, migi.NewOptionInvalidType(name, value, "time.Time")
 	}
 }
 
-func (e *jsonSource) Duration(name string) (time.Duration, error) {
+func (e *source) Duration(name string) (time.Duration, error) {
 	value, err := e.lookup(name)
 	if err != nil {
 		return time.Duration(0), err
@@ -137,12 +137,12 @@ func (e *jsonSource) Duration(name string) (time.Duration, error) {
 	case time.Duration:
 		return rawValue, nil
 	default:
-		return time.Duration(0), errors.NewOptionInvalidType(name, value, "time.Duration")
+		return time.Duration(0), migi.NewOptionInvalidType(name, value, "time.Duration")
 	}
 }
 
-func NewJSONSource(reader io.Reader) *jsonSource {
-	return &jsonSource{
+func NewSource(reader io.Reader) *source {
+	return &source{
 		reader:  reader,
 		options: make(map[string]interface{}),
 	}
