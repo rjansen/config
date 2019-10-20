@@ -6,7 +6,10 @@ go:
     - 1.12.x
     - 1.13.x
 
-install: OS=linux_amd64 TMP_DIR=/tmp sudo make codecov.install gotestsum.install
+env:
+  - OS=linux_amd64 TMP_DIR=/tmp
+
+install: sudo make codecov.install gotestsum.install
 
 script: make ci
 
