@@ -4,6 +4,7 @@ ARG APP=migi
 ARG GID=1000
 ARG UID=1000
 RUN groupadd -g $GID -o $APP && useradd -m -u $UID -g $GID -o -s /bin/bash $APP
+ENV OS linux_amd64
 
 RUN curl -O -L https://github.com/gotestyourself/gotestsum/releases/download/v0.3.5/gotestsum_0.3.5_linux_amd64.tar.gz && \
     tar xf gotestsum_0.3.5_linux_amd64.tar.gz && \
