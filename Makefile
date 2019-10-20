@@ -71,6 +71,11 @@ vet:
 	@echo "$(REPO) vet"
 	go vet $(PKGS)
 
+.PHONY: lint
+lint:
+	@echo "$(REPO) lint"
+	golint $$(go list ./...)
+
 .PHONY: debug
 debug:
 	@echo "$(REPO) debug"
@@ -124,16 +129,16 @@ coverage.push:
 .PHONY: docker
 docker.build:
 	@echo "$(REPO)@$(BUILD) docker"
-	docker build --build-arg UID=$(shell id -u) --build-arg GID=$(shell id -g) \
-		         -t $(DOCKER_NAME) -t $(DOCKER_NAME):$(VERSION) -f ./etc/docker/Dockerfile .
+	docker build --build-arg APP=$(NAME) --build-arg UID=$(shell id -u) --build-arg GID=$(shell id -g) \
+		         -t $(DOCKER_NAME) -t $(DOCKER_NAME):$(VERSION) .
 
 .PHONY: docker.bash
 docker.bash:
 	@echo "$(REPO)@$(BUILD) docker.bash"
 	docker run --rm --name $(NAME)-bash --entrypoint bash -it -u $(shell id -u):$(shell id -g) \
-			   -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME)
+			   -v `pwd`:/app/$(NAME) $(DOCKER_NAME)
 
 docker.%:
 	@echo "$(REPO)@$(BUILD) docker.$*"
 	@docker run --rm --name $(NAME)-run -u $(shell id -u):$(shell id -g) \
-    		    -v `pwd`:/go/src/$(REPO) $(DOCKER_NAME) $*
+    		    -v `pwd`:/app/$(NAME) $(DOCKER_NAME) $*
