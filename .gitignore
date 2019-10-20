@@ -2,6 +2,6 @@
 on/
 vendor/
 tmp/
-migi*coverage*
+*coverage*
 *.pprof
 *.test
