@@ -4,3 +4,6 @@ include scripts/make/go/gotestsum/Makefile
 include scripts/make//go/lib/Makefile
 CODECOV_COVERAGE_FILE := $(GO_COVERAGE_FILE)
 include scripts/make/codecov/Makefile
+
+.PHONY: ci
+ci: go.vet go.lint go.coverage.text
