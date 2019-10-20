@@ -71,6 +71,11 @@ vet:
 	@echo "$(REPO) vet"
 	go vet $(PKGS)
 
+.PHONY: lint
+lint:
+	@echo "$(REPO) lint"
+	golint $$(go list ./...)
+
 .PHONY: debug
 debug:
 	@echo "$(REPO) debug"
