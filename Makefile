@@ -4,7 +4,7 @@ VERSION     := $(notdir $(shell git describe --tags --always))
 BUILD       := $(VERSION).$(shell git rev-parse --short HEAD)
 MAKEFILE    := $(lastword $(MAKEFILE_LIST))
 BASE_DIR    := $(shell cd $(dir $(MAKEFILE)); pwd)
-TMP_DIR     := $(BASE_DIR)/tmp
+TMP_DIR     ?= $(BASE_DIR)/tmp
 DOCKER_NAME := e-pedion/$(NAME)
 DOCKER_FILE := ./Dockerfile
 
