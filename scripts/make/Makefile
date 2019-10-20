@@ -7,4 +7,4 @@ CODECOV_COVERAGE_FILE := $(GO_COVERAGE_FILE)
 include scripts/make/codecov/Makefile
 
 .PHONY: ci
-ci: go.vet go.lint go.coverage.text
+ci: go.vet go.coverage.text
