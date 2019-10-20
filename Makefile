@@ -1,5 +1,5 @@
 NAME        := migi
-REPO        := github.com/rjansen/$(NAME)
+REPO        := github.com/rjansen
 VERSION     := $(notdir $(shell git describe --tags --always))
 BUILD       := $(VERSION).$(shell git rev-parse --short HEAD)
 MAKEFILE    := $(lastword $(MAKEFILE_LIST))
@@ -12,7 +12,6 @@ DOCKER_FILE := ./Dockerfile
 clearcache:
 	@echo "$(NAME)@$(BUILD) clearcache"
 	-rm -Rf $(TMP_DIR)
-	-docker rmi -f $(DOCKER_NAME)
 
 $(TMP_DIR):
 	mkdir -p $(TMP_DIR)
