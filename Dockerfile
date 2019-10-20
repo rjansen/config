@@ -1,4 +1,4 @@
-FROM golang:1.12.9
+FROM golang:1.13.1
 
 ARG APP=migi
 ARG GID=1000
@@ -12,6 +12,7 @@ RUN curl -O -L https://github.com/gotestyourself/gotestsum/releases/download/v0.
 RUN curl -L -o codecov https://codecov.io/bash && \
     chmod a+x codecov && \
     mv codecov /usr/local/bin
+RUN go get -u golang.org/x/lint/golint
 RUN go get -u github.com/derekparker/delve/cmd/dlv
 
 WORKDIR /app/$APP
